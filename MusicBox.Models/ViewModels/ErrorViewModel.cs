@@ -1,6 +1,4 @@
-using System;
-
-namespace MusicBox.Models
+namespace MusicBox.Models.ViewModels
 {
     public class ErrorViewModel
     {

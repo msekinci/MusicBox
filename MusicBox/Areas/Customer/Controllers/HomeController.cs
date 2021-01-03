@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MusicBox.Models;
-using System;
-using System.Collections.Generic;
+using MusicBox.Models.ViewModels;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MusicBox.Controllers
+namespace MusicBox.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
