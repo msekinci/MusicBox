@@ -20,7 +20,6 @@ namespace MusicBox.DataAccess.Concrete
             {
                 data.CategoryName = category.CategoryName;
             }
-            _db.SaveChanges();
         }
     }
 }
