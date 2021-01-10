@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using MusicBox.DataAccess.Interfaces;
 using MusicBox.Models.DbModels;
+using MusicBox.Utility;
 
 namespace MusicBox.Areas.Admin.Controllers
 {
@@ -23,7 +25,11 @@ namespace MusicBox.Areas.Admin.Controllers
         #region API CALLS
         public IActionResult GetAll()
         {
-            var coverTypes = _unitOfWork.coverType.GetAll();
+            //Entity
+            //var coverTypes = _unitOfWork.coverType.GetAll();
+
+            //Dapper
+            var coverTypes = _unitOfWork.spCall.List<CoverType>(ProjectConstant.Proc_CoverType_GetAll, null);
             return Json(new { data = coverTypes });
         }
         #endregion
@@ -43,7 +49,13 @@ namespace MusicBox.Areas.Admin.Controllers
                 return View(coverType);
             }
 
-            coverType = _unitOfWork.coverType.Get(id.Value);
+            //Entity
+            //coverType = _unitOfWork.coverType.Get(id.Value);
+
+            //Dapper
+            var parameter = new DynamicParameters();
+            
+            coverType = _unitOfWork.spCall.OneRecord<CoverType>(ProjectConstant.Proc_CoverType_Get, parameter);
             if (coverType == null)
             {
                 return NotFound();
@@ -57,13 +69,19 @@ namespace MusicBox.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var parameter = new DynamicParameters();
+                
                 if (coverType.Id == 0)
                 {
-                    _unitOfWork.coverType.Add(coverType);
+                    //_unitOfWork.coverType.Add(coverType);
+                    parameter.Add("@Name", coverType.Name);
+                    _unitOfWork.spCall.Execute(ProjectConstant.Proc_CoverType_Create, parameter);
                 }
                 else
                 {
-                    _unitOfWork.coverType.Update(coverType);
+                    //_unitOfWork.coverType.Update(coverType);
+                    parameter.Add("@Id", coverType.Id);
+                    _unitOfWork.spCall.Execute(ProjectConstant.Proc_CoverType_Update, parameter);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
@@ -74,12 +92,23 @@ namespace MusicBox.Areas.Admin.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var deleteData = _unitOfWork.coverType.Get(id);
+            //Entity
+            //var deleteData = _unitOfWork.coverType.Get(id);
+            //if (deleteData == null)
+            //{
+            //    return Json(new { success = false, message = "Data Not Found!" });
+            //}
+            //_unitOfWork.coverType.Remove(deleteData);
+
+            //Dapper
+            var parameter = new DynamicParameters();
+            parameter.Add("@Id", id);
+            var deleteData = _unitOfWork.spCall.OneRecord<CoverType>(ProjectConstant.Proc_CoverType_Get, parameter);
             if (deleteData == null)
             {
                 return Json(new { success = false, message = "Data Not Found!" });
             }
-            _unitOfWork.coverType.Remove(deleteData);
+            _unitOfWork.spCall.Execute(ProjectConstant.Proc_CoverType_Delete, parameter);
             _unitOfWork.Save();
             return Json(new { success = true, message = "Delete Operation Successfully!" });
         }

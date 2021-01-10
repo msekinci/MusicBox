@@ -6,6 +6,7 @@ namespace MusicBox.DataAccess.Interfaces
     {
         ICategoryRepository category { get; }
         ICoverTypeRepository coverType { get; }
+        IProductRepository product { get; }
         ISPCallRepository spCall { get; }
         void Save();
     }
