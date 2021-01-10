@@ -11,9 +11,11 @@ namespace MusicBox.DataAccess.Concrete
         {
             _db = db;
             category = new CategoryRepository(_db);
+            coverType = new CoverTypeRepository(_db);
             spCall = new SPCallRepository(_db);
         }
         public ICategoryRepository category { get; private set; }
+        public ICoverTypeRepository coverType { get; private set; }
 
         public ISPCallRepository spCall { get; private set; }
 
